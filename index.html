@@ -208,6 +208,145 @@
         .moderation-btns button:hover {
             background: #cc5555;
         }
+        .tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+        .tab-btn {
+            background: rgba(26, 26, 26, 0.9);
+            color: #ffd700;
+            border: 2px solid #ffd700;
+            padding: 10px 20px;
+            margin: 0 5px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 700;
+            transition: background 0.3s;
+        }
+        .tab-btn.active {
+            background: #ffd700;
+            color: #000;
+        }
+        .tab-btn:hover {
+            background: rgba(255,215,0,0.2);
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .user-auth {
+            background: rgba(26, 26, 26, 0.9);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            border: 2px solid #ffd700;
+            box-shadow: 0 4px 8px rgba(255,215,0,0.3);
+        }
+        .user-auth h2 {
+            color: #ffd700;
+            margin-top: 0;
+        }
+        .user-auth input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 2px solid #ffd700;
+            border-radius: 8px;
+            background-color: #333;
+            color: #fff;
+        }
+        .user-auth button {
+            background: linear-gradient(45deg, #ffd700, #ff6b6b);
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 700;
+            margin-right: 10px;
+        }
+        .user-auth button:hover {
+            background: linear-gradient(45deg, #ff6b6b, #ffd700);
+        }
+        .complaint-form {
+            background: rgba(26, 26, 26, 0.9);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            border: 2px solid #ffd700;
+            box-shadow: 0 4px 8px rgba(255,215,0,0.3);
+            transition: transform 0.3s;
+        }
+        .complaint-form:hover {
+            transform: translateY(-5px);
+        }
+        .complaint-form h2 {
+            color: #ffd700;
+            margin-top: 0;
+            font-weight: 700;
+        }
+        .complaint-form input, .complaint-form textarea {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 10px;
+            border: 2px solid #ffd700;
+            border-radius: 8px;
+            background-color: #333;
+            color: #fff;
+            font-family: 'Roboto', sans-serif;
+            transition: border-color 0.3s;
+        }
+        .complaint-form input:focus, .complaint-form textarea:focus {
+            border-color: #ff6b6b;
+            outline: none;
+        }
+        .complaint-form input[type="file"] {
+            margin-bottom: 10px;
+        }
+        .complaint-form button {
+            background: linear-gradient(45deg, #ffd700, #ff6b6b);
+            color: #000;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 700;
+            transition: background 0.3s;
+        }
+        .complaint-form button:hover {
+            background: linear-gradient(45deg, #ff6b6b, #ffd700);
+        }
+        .complaint {
+            background: rgba(26, 26, 26, 0.9);
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 15px;
+            border: 2px solid #ffd700;
+            box-shadow: 0 4px 8px rgba(255,215,0,0.3);
+        }
+        .complaint h3 {
+            color: #ffd700;
+            margin-top: 0;
+        }
+        .complaint img, .complaint video {
+            max-width: 100%;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+        .user-logout-btn {
+            position: absolute;
+            top: 20px;
+            right: 100px;
+            background: #ff6b6b;
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -223,17 +362,50 @@
 
         <button class="logout-btn" id="logoutBtn" style="display: none;" onclick="adminLogout()">Выйти</button>
 
-        <div class="question-form">
-            <h2><i class="fas fa-question-circle"></i> Задать вопрос</h2>
-            <form id="questionForm">
-                <input type="text" id="questionTitle" placeholder="Заголовок вопроса" required>
-                <textarea id="questionText" placeholder="Подробное описание вопроса" rows="4" required></textarea>
-                <button type="submit"><i class="fas fa-paper-plane"></i> Отправить вопрос</button>
-            </form>
+        <div class="user-auth" id="userAuth">
+            <h2><i class="fas fa-user"></i> Регистрация / Вход</h2>
+            <input type="text" id="userUsername" placeholder="Логин" required>
+            <input type="password" id="userPassword" placeholder="Пароль" required>
+            <button onclick="userRegister()">Регистрация</button>
+            <button onclick="userLogin()">Войти</button>
         </div>
 
-        <div class="questions-list" id="questionsList">
-            <!-- Вопросы будут добавляться сюда -->
+        <button class="user-logout-btn" id="userLogoutBtn" style="display: none;" onclick="userLogout()">Выйти (Пользователь)</button>
+
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('questions')">Вопросы</button>
+            <button class="tab-btn" onclick="switchTab('complaints')">Жалобы</button>
+        </div>
+
+        <div id="questionsTab" class="tab-content active">
+            <div class="question-form">
+                <h2><i class="fas fa-question-circle"></i> Задать вопрос</h2>
+                <form id="questionForm">
+                    <input type="text" id="questionTitle" placeholder="Заголовок вопроса" required>
+                    <textarea id="questionText" placeholder="Подробное описание вопроса" rows="4" required></textarea>
+                    <button type="submit"><i class="fas fa-paper-plane"></i> Отправить вопрос</button>
+                </form>
+            </div>
+
+            <div class="questions-list" id="questionsList">
+                <!-- Вопросы будут добавляться сюда -->
+            </div>
+        </div>
+
+        <div id="complaintsTab" class="tab-content">
+            <div class="complaint-form">
+                <h2><i class="fas fa-exclamation-triangle"></i> Подать жалобу</h2>
+                <form id="complaintForm">
+                    <input type="text" id="complaintTitle" placeholder="Заголовок жалобы" required>
+                    <textarea id="complaintText" placeholder="Описание жалобы" rows="4" required></textarea>
+                    <input type="file" id="complaintFile" accept="image/*,video/*" multiple>
+                    <button type="submit"><i class="fas fa-paper-plane"></i> Отправить жалобу</button>
+                </form>
+            </div>
+
+            <div class="complaints-list" id="complaintsList">
+                <!-- Жалобы будут добавляться сюда -->
+            </div>
         </div>
     </div>
 
@@ -241,27 +413,37 @@
         document.addEventListener('DOMContentLoaded', function() {
             const questionForm = document.getElementById('questionForm');
             const questionsList = document.getElementById('questionsList');
+            const complaintForm = document.getElementById('complaintForm');
+            const complaintsList = document.getElementById('complaintsList');
             const adminLogin = document.getElementById('adminLogin');
             const logoutBtn = document.getElementById('logoutBtn');
+            const userAuth = document.getElementById('userAuth');
+            const userLogoutBtn = document.getElementById('userLogoutBtn');
 
-            // Инициализация админов
+            // Инициализация админов и пользователей
             initializeAdmins();
+            initializeUsers();
 
-            // Проверка статуса админа при загрузке
+            // Проверка статуса при загрузке
             checkAdminStatus();
+            checkUserStatus();
 
-            // Загрузка вопросов из localStorage
+            // Загрузка данных из localStorage
             loadQuestions();
+            loadComplaints();
 
+            // Обработчик формы вопросов
             questionForm.addEventListener('submit', function(e) {
                 e.preventDefault();
                 const title = document.getElementById('questionTitle').value;
                 const text = document.getElementById('questionText').value;
+                const user = isUserLoggedIn() ? JSON.parse(localStorage.getItem('currentUser')).username : 'Аноним';
 
                 const question = {
                     id: Date.now(),
                     title: title,
                     text: text,
+                    user: user,
                     answers: [],
                     timestamp: new Date().toLocaleString()
                 };
@@ -270,6 +452,48 @@
                 displayQuestion(question);
 
                 questionForm.reset();
+            });
+
+            // Обработчик формы жалоб
+            complaintForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const title = document.getElementById('complaintTitle').value;
+                const text = document.getElementById('complaintText').value;
+                const fileInput = document.getElementById('complaintFile');
+                const user = isUserLoggedIn() ? JSON.parse(localStorage.getItem('currentUser')).username : 'Аноним';
+
+                const complaint = {
+                    id: Date.now(),
+                    title: title,
+                    text: text,
+                    user: user,
+                    files: [],
+                    timestamp: new Date().toLocaleString()
+                };
+
+                // Обработка файлов
+                if (fileInput.files.length > 0) {
+                    Array.from(fileInput.files).forEach(file => {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            complaint.files.push({
+                                name: file.name,
+                                type: file.type,
+                                data: e.target.result
+                            });
+                            if (complaint.files.length === fileInput.files.length) {
+                                saveComplaint(complaint);
+                                displayComplaint(complaint);
+                                complaintForm.reset();
+                            }
+                        };
+                        reader.readAsDataURL(file);
+                    });
+                } else {
+                    saveComplaint(complaint);
+                    displayComplaint(complaint);
+                    complaintForm.reset();
+                }
             });
 
             function saveQuestion(question) {
@@ -289,7 +513,7 @@
                 questionDiv.innerHTML = `
                     <h3><i class="fas fa-question"></i> ${question.title}</h3>
                     <p>${question.text}</p>
-                    <small><i class="fas fa-clock"></i> Задан: ${question.timestamp}</small>
+                    <small><i class="fas fa-user"></i> Пользователь: ${question.user} | <i class="fas fa-clock"></i> Задан: ${question.timestamp}</small>
                     <div class="moderation-btns" style="display: none;">
                         <button onclick="editQuestion(${question.id})"><i class="fas fa-edit"></i> Редактировать</button>
                         <button onclick="deleteQuestion(${question.id})"><i class="fas fa-trash"></i> Удалить</button>
@@ -308,6 +532,40 @@
                     questionDiv.querySelector('.answer-form').style.display = 'block';
                     questionDiv.querySelector('.moderation-btns').style.display = 'block';
                 }
+            }
+
+            function saveComplaint(complaint) {
+                const complaints = JSON.parse(localStorage.getItem('minecraftComplaints') || '[]');
+                complaints.push(complaint);
+                localStorage.setItem('minecraftComplaints', JSON.stringify(complaints));
+            }
+
+            function loadComplaints() {
+                const complaints = JSON.parse(localStorage.getItem('minecraftComplaints') || '[]');
+                complaints.forEach(displayComplaint);
+            }
+
+            function displayComplaint(complaint) {
+                const complaintDiv = document.createElement('div');
+                complaintDiv.className = 'complaint';
+                let filesHtml = '';
+                if (complaint.files && complaint.files.length > 0) {
+                    filesHtml = complaint.files.map(file => {
+                        if (file.type.startsWith('image/')) {
+                            return `<img src="${file.data}" alt="${file.name}">`;
+                        } else if (file.type.startsWith('video/')) {
+                            return `<video controls><source src="${file.data}" type="${file.type}"></video>`;
+                        }
+                        return '';
+                    }).join('');
+                }
+                complaintDiv.innerHTML = `
+                    <h3><i class="fas fa-exclamation-triangle"></i> ${complaint.title}</h3>
+                    <p>${complaint.text}</p>
+                    <small><i class="fas fa-user"></i> Пользователь: ${complaint.user} | <i class="fas fa-clock"></i> Подана: ${complaint.timestamp}</small>
+                    ${filesHtml}
+                `;
+                complaintsList.appendChild(complaintDiv);
             }
 
             window.addAnswer = function(questionId, answerText) {
@@ -345,6 +603,69 @@
                     localStorage.setItem('admins', JSON.stringify(admins));
                 }
             }
+
+            function initializeUsers() {
+                if (!localStorage.getItem('users')) {
+                    localStorage.setItem('users', JSON.stringify([]));
+                }
+            }
+
+            function isUserLoggedIn() {
+                return localStorage.getItem('currentUser') !== null;
+            }
+
+            window.userRegister = function() {
+                const username = document.getElementById('userUsername').value;
+                const password = document.getElementById('userPassword').value;
+                if (!username || !password) {
+                    alert('Заполните все поля!');
+                    return;
+                }
+                const users = JSON.parse(localStorage.getItem('users') || '[]');
+                if (users.find(u => u.username === username)) {
+                    alert('Пользователь с таким логином уже существует!');
+                    return;
+                }
+                users.push({ username, password });
+                localStorage.setItem('users', JSON.stringify(users));
+                localStorage.setItem('currentUser', JSON.stringify({ username }));
+                checkUserStatus();
+                alert('Регистрация успешна!');
+            };
+
+            window.userLogin = function() {
+                const username = document.getElementById('userUsername').value;
+                const password = document.getElementById('userPassword').value;
+                const users = JSON.parse(localStorage.getItem('users') || '[]');
+                const user = users.find(u => u.username === username && u.password === password);
+                if (user) {
+                    localStorage.setItem('currentUser', JSON.stringify({ username }));
+                    checkUserStatus();
+                    alert('Вход выполнен успешно!');
+                } else {
+                    alert('Неверный логин или пароль!');
+                }
+            };
+
+            window.userLogout = function() {
+                localStorage.removeItem('currentUser');
+                checkUserStatus();
+                alert('Вы вышли из системы.');
+            };
+
+            window.switchTab = function(tab) {
+                const tabs = document.querySelectorAll('.tab-btn');
+                const contents = document.querySelectorAll('.tab-content');
+                tabs.forEach(t => t.classList.remove('active'));
+                contents.forEach(c => c.classList.remove('active'));
+                if (tab === 'questions') {
+                    document.querySelector('button[onclick="switchTab(\'questions\')"]').classList.add('active');
+                    document.getElementById('questionsTab').classList.add('active');
+                } else if (tab === 'complaints') {
+                    document.querySelector('button[onclick="switchTab(\'complaints\')"]').classList.add('active');
+                    document.getElementById('complaintsTab').classList.add('active');
+                }
+            };
 
             window.adminLogin = function() {
                 const username = document.getElementById('adminUsername').value;
@@ -408,6 +729,19 @@
                     document.querySelectorAll('.answer-form').forEach(form => form.style.display = 'none');
                     document.querySelectorAll('.moderation-btns').forEach(btns => btns.style.display = 'none');
                 }
+            }
+
+            function checkUserStatus() {
+                if (isUserLoggedIn()) {
+                    userAuth.style.display = 'none';
+                    userLogoutBtn.style.display = 'block';
+                } else {
+                    userAuth.style.display = 'block';
+                    userLogoutBtn.style.display = 'none';
+                }
+                // Формы вопросов и жалоб всегда видны
+                document.querySelector('.question-form').style.display = 'block';
+                document.querySelector('.complaint-form').style.display = 'block';
             }
         });
     </script>
